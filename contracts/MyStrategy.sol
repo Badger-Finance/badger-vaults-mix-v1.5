@@ -84,7 +84,7 @@ contract MyStrategy is BaseStrategy {
         
         // Use this if your strategy doesn't sell the extra tokens
         // This will take fees and send the token to the badgerTree
-        _processExtraToken(token, amount);
+        _processExtraToken(BADGER, 0);
 
         return harvested;
     }
