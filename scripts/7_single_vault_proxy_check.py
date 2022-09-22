@@ -9,7 +9,7 @@ ADMIN_SLOT = int(0xB53127684A568B3173AE13B9F8A6016E243E63B6E8EE1178D6A717850B5D6
 
 
 ## TODO: Paste Vault add here
-VAULT = "0xA484427CF91bbd945c39eF87dF0A02Bb8625dC97"
+VAULT = "0x41466b8ec544e3192Aa1aA30f65fC60FAb4D52Bf"
 
 
 def main():
@@ -48,7 +48,7 @@ def check_vault_and_strategy(vault, strategy, proxyAdmin, registry):
 
     name = vault.name()
 
-    print("Checking for", name)
+    print("Checking for", name, vault.address)
 
     ## NOTE: Nuanced check frequently for keys
     strategist = registry.get("techOps")
@@ -70,6 +70,7 @@ def check_vault_and_strategy(vault, strategy, proxyAdmin, registry):
         print(error)
 
     try:
+        print("Check Strategy ProxyAdmin")
         check_proxy_admin(strategy, proxyAdmin)
     except Exception as error:
         print("Something went wrong")
@@ -79,19 +80,18 @@ def check_vault_and_strategy(vault, strategy, proxyAdmin, registry):
 def check_proxy_admin(proxy, proxyAdmin):
     # Get proxyAdmin address form the proxy's ADMIN_SLOT
     val = web3.eth.getStorageAt(proxy.address, ADMIN_SLOT).hex()
-    print("val", val)
     address = val
 
     # Check differnt possible scenarios
     if address == AddressZero:
-        console.print(":[red] admin not found on slot (GnosisSafeProxy?)[/red]")
+        console.print("[red] admin not found on slot (GnosisSafeProxy?)[/red]")
     elif address != proxyAdmin:
         console.print(
-            ":[red] admin is different to proxyAdminTimelock[/red] - ", address
+            "[red] admin is different to proxyAdminTimelock[/red] - ", address
         )
     else:
         assert address == proxyAdmin
-        console.print(":[green] admin matches proxyAdminTimelock![/green]")
+        console.print("[green] admin matches proxyAdminTimelock![/green]")
 
 
 def check_access_control(vault, strategist, keeper, governance, guardian, treasury):
